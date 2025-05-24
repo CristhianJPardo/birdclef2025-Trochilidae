@@ -10,7 +10,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SAM_TEMPLATE: "template.yaml"
+      SAM_TEMPLATE: "./iac/template.yaml"
       STACK_NAME: "birdclef-2025-stack"
       BUCKET_NAME: "birdclef-2025-sam-artifacts"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
