@@ -6,7 +6,7 @@ Resources:
   BirdclefBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: birdclef2025-data-${AWS::Region}-${AWS::AccountId}
+      BucketName: !Sub "birdclef2025-data-${AWS::Region}-${AWS::AccountId}"
       Tags:
         - Key: Project
           Value: BirdCLEF2025
