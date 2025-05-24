@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template to create an S3 bucket for the BirdCLEF+ 2025 project.
+
+Resources:
+  BirdclefBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: birdclef2025-data-${AWS::Region}-${AWS::AccountId}
+      Tags:
+        - Key: Project
+          Value: BirdCLEF2025
+
+Outputs:
+  BucketName:
+    Description: Name of the created S3 bucket
+    Value: !Ref BirdclefBucket
+
+  BucketArn:
+    Description: ARN of the created S3 bucket
+    Value: !GetAtt BirdclefBucket.Arn

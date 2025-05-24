@@ -1,0 +1,49 @@
+name: CI/CD - BirdCLEF+ 2025
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SAM_TEMPLATE: "template.yaml"
+      STACK_NAME: "birdclef-2025-stack"
+      BUCKET_NAME: "birdclef-2025-sam-artifacts"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install AWS SAM CLI and AWS CLI
+        run: pip install aws-sam-cli awscli
+
+      - name: Build SAM application
+        run: sam build --template-file $SAM_TEMPLATE --region $AWS_DEFAULT_REGION
+
+      - name: Package SAM application
+        run: sam package \
+          --template-file .aws-sam/build/template.yaml \
+          --output-template-file packaged.yaml \
+          --region $AWS_DEFAULT_REGION \
+          --s3-prefix $STACK_NAME \
+          --s3-bucket $BUCKET_NAME
+
+      - name: Deploy SAM application
+        run: sam deploy \
+          --template-file packaged.yaml \
+          --stack-name $STACK_NAME \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+          --region $AWS_DEFAULT_REGION \
+          --no-fail-on-empty-changeset
